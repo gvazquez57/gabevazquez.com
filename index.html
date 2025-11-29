@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gabe Vazquez</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Digital calling card for Gabe Vazquez — words, noise, pixels." />
+
+  <!-- Social preview -->
+  <meta property="og:title" content="Gabe Vazquez" />
+  <meta property="og:description" content="Digital calling card — words, noise, pixels." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gabevazquez.com" />
+  <!-- drop a real image later -->
+  <meta property="og:image" content="https://gabevazquez.com/preview.jpg" />
+
+  <style>
+    /* ---- Base ---- */
+
+    :root {
+      --bg: #020617;
+      --bg-alt: #020617;
+      --fg: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #f97316;
+      --accent-soft: rgba(249,115,22,0.15);
+      --accent-strong: #fb923c;
+      --danger: #ef4444;
+      --border-subtle: rgba(148,163,184,0.35);
+      --card-radius: 22px;
+      --card-shadow: 0 22px 60px rgba(0,0,0,0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, #111827 0, #020617 55%) fixed,
+        radial-gradient(circle at bottom, #020617 0, #000 60%) fixed;
+      color: var(--fg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -40px;
+      pointer-events: none;
+      opacity: 0.15;
+      mix-blend-mode: soft-light;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+      z-index: -1;
+    }
+
+    .frame {
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+    }
+
+    /* Glow orbits */
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(36px);
+      opacity: 0.6;
+      z-index: -2;
+    }
+    .orb--orange {
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(249,115,22,0.9), transparent 70%);
+      top: -80px;
+      right: -40px;
+    }
+    .orb--blue {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(56,189,248,0.8), transparent 70%);
+      bottom: -80px;
+      left: -60px;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 28px;
+      padding: 22px 18px 20px;
+      background:
+        linear-gradient(135deg, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      opacity: 0.22;
+      background:
+        radial-gradient(circle at 0 0, rgba(249,115,22,0.7), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(59,130,246,0.6), transparent 55%);
+      z-index: -1;
+    }
+
+    /* ---- Header ---- */
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .id-block {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      border: 1px solid rgba(248,250,252,0.55);
+      background:
+        conic-gradient(from 210deg, #f97316, #22d3ee, #a855f7, #f97316);
+      padding: 2px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: radial-gradient(circle at 30% 10%, #111827, #020617);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .avatar-scan {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(248,250,252,0.22),
+        transparent 40%,
+        transparent 60%,
+        rgba(248,250,252,0.12)
+      );
+      mix-blend-mode: screen;
+      transform: translateY(-100%);
+      animation: scan 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-110%); }
+      45% { transform: translateY(110%); }
+      100% { transform: translateY(110%); }
+    }
+
+    .id-text h1 {
+      font-size: 1.05rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #f9fafb;
+      margin-bottom: 2px;
+    }
+
+    .id-text .handle {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .id-text .tagline {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      border-radius: 999px;
+      padding: 5px 10px 4px;
+      border: 1px solid rgba(248,250,252,0.28);
+      background: rgba(15,23,42,0.92);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #16a34a);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.35);
+    }
+
+    /* ---- Bio / line ---- */
+
+    .intro {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .intro span {
+      color: var(--accent-strong);
+    }
+
+    /* ---- Link list ---- */
+
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .link {
+      position: relative;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(15,23,42,0.9);
+      color: var(--fg);
+      text-decoration: none;
+      padding: 11px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      overflow: hidden;
+      transition:
+        transform 0.12s ease-out,
+        box-shadow 0.12s ease-out,
+        border-color 0.12s ease-out,
+        background 0.12s ease-out;
+    }
+
+    .link-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .link-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .link-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .link-pill {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      padding: 3px 9px;
+      border: 1px solid rgba(148,163,184,0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(15,23,42,0.95);
+      white-space: nowrap;
+    }
+
+    .link-pill span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    /* Service-specific accent */
+    .link--spotify {
+      border-color: rgba(45,212,191,0.8);
+    }
+    .link--spotify .link-pill span {
+      background: #22c55e;
+    }
+
+    .link--instagram {
+      border-image: linear-gradient(90deg,#ec4899,#f97316,#eab308) 1;
+    }
+
+    .link--primary {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      border-color: rgba(251,146,60,1);
+      color: #0b1120;
+      box-shadow: 0 12px 30px rgba(248,113,22,0.65);
+    }
+
+    .link--primary .link-sub {
+      color: rgba(15,23,42,0.9);
+    }
+
+    .link::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 0 0, rgba(248,250,252,0.18), transparent 55%);
+      opacity: 0;
+      mix-blend-mode: screen;
+      transition: opacity 0.12s ease-out;
+    }
+
+    .link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.8);
+      border-color: rgba(249,115,22,0.75);
+    }
+
+    .link:hover::before {
+      opacity: 1;
+    }
+
+    /* ---- Footer / small print ---- */
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .foot span {
+      opacity: 0.85;
+    }
+
+    .foot strong {
+      color: #e5e7eb;
+    }
+
+    .foot-code {
+      font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.66rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+    }
+
+    /* ---- Responsive tweaks ---- */
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 18px 14px 16px;
+      }
+
+      .id-text h1 {
+        font-size: 0.98rem;
+      }
+
+      .intro {
+        font-size: 0.8rem;
+      }
+
+      .link-label {
+        font-size: 0.86rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="orb orb--orange"></div>
+    <div class="orb orb--blue"></div>
+
+    <main class="card" aria-label="Profile and links for Gabe Vazquez">
+      <header class="top-row">
+        <div class="id-block">
+          <div class="avatar" aria-hidden="true">
+            <div class="avatar-inner">GV</div>
+            <div class="avatar-scan"></div>
+          </div>
+          <div class="id-text">
+            <h1>Gabe&nbsp;Vazquez</h1>
+            <div class="handle">@styroman57</div>
+            <div class="tagline">noise • pixels • modern aging experiments</div>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          online sometimes
+        </div>
+      </header>
+
+      <section class="intro">
+        Soft-spoken chaos engine.  
+        <span>Marketing brain, loud music, quiet scheming.</span>
+      </section>
+
+      <nav class="link-list" aria-label="Primary links">
+        <!-- Spotify -->
+        <a class="link link--spotify link--primary"
+           href="https://open.spotify.com/artist/6ZoIgjWA558iomAjyY1kUY?si=01_DFr6JSDyuWROf0mFyQw"
+           target="_blank" rel="noopener noreferrer">
+          <div class="link-main">
+            <div class="link-label">Listen on Spotify</div>
+            <div class="link-sub">Soundtrack from the inside of my skull.</div>
+          </div>
+          <div class="link-pill">
+            <span></span> Artist profile
+          </div>
+        </a>
+
+        <!-- Instagram -->
+        <a class="link link--instagram"
+           href="https://instagram.com/styroman57"
+           target="_blank" rel="noopener noreferrer">
+          <div class="link-main">
+            <div class="link-label">Instagram</div>
+            <div class="link-sub">Fragments of life, gear, and whatever amused me.</div>
+          </div>
+          <div class="link-pill">
+            <span></span> @styroman57
+          </div>
+        </a>
+
+        <!-- Placeholder for future stuff -->
+        <a class="link"
+           href="mailto:hello@gabevazquez.com?subject=Hey%20Gabe&body=Use%20your%20words."
+        >
+          <div class="link-main">
+            <div class="link-label">Email</div>
+            <div class="link-sub">Old-school contact. No forms, no funnels.</div>
+          </div>
+          <div class="link-pill">
+            <span></span> hello@gabevazquez.com
+          </div>
+        </a>
+
+        <!-- Add more when you feel like it -->
+        <!--
+        <a class="link" href="https://your-next-thing.com" target="_blank" rel="noopener noreferrer">
+          <div class="link-main">
+            <div class="link-label">Next experiment</div>
+            <div class="link-sub">Drop-in slot for whatever you're cooking next.</div>
+          </div>
+          <div class="link-pill">
+            <span></span> in progress
+          </div>
+        </a>
+        -->
+      </nav>
+
+      <footer class="foot">
+        <span>© <span id="year"></span> Gabe Vazquez</span>
+        <span class="foot-code">hand-rolled &nbsp;•&nbsp; no templates</span>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Year autofill
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
